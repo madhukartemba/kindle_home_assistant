@@ -15,11 +15,11 @@ PORT = 8787
 PAGE_W = 600
 PAGE_H = 794
 HEADER = 56
-NAV_H = 88
+NAV_H = 56
 NAV_TOP = PAGE_H - NAV_H
 SEC_H = 26
-WX_H = 108
-DOOR_H = 70
+WX_H = 88
+DOOR_H = 76
 IST = timezone(timedelta(hours=5, minutes=30))
 
 DOORS = (
@@ -264,15 +264,15 @@ body {{ font-family: Arial, Helvetica, sans-serif; }}
 a.back {{ position: absolute; right: 0; top: 0; width: 150px; height: {HEADER}px; line-height: {HEADER}px; text-align: center; background: #000; color: #fff; text-decoration: none; font-size: 28px; font-weight: bold; }}
 .sec {{ position: absolute; left: 0; width: {PAGE_W}px; height: {SEC_H}px; line-height: 23px; padding-left: 16px; font-size: 18px; font-weight: bold; letter-spacing: 0.8px; border-bottom: 3px solid #000; box-sizing: border-box; }}
 .wx {{ position: absolute; left: 0; width: {PAGE_W}px; border-bottom: 3px solid #000; box-sizing: border-box; background: #fff; color: #000; }}
-.wx-cond {{ position: absolute; left: 20px; top: 8px; font-size: 32px; font-weight: bold; }}
-.wx-temp {{ position: absolute; right: 20px; top: 2px; font-size: 44px; font-weight: bold; }}
-.wx-rain {{ position: absolute; left: 0; width: {PAGE_W}px; text-align: center; font-size: 30px; font-weight: bold; }}
+.wx-cond {{ position: absolute; left: 20px; top: 4px; font-size: 28px; font-weight: bold; }}
+.wx-temp {{ position: absolute; right: 20px; top: 0; font-size: 36px; font-weight: bold; }}
+.wx-rain {{ position: absolute; left: 0; width: {PAGE_W}px; text-align: center; font-size: 26px; font-weight: bold; }}
 .wx-rain.due {{ background: #000; color: #fff; }}
 .mini {{ position: absolute; left: 0; width: {PAGE_W}px; border-bottom: 3px solid #000; box-sizing: border-box; }}
-.mini .dname {{ position: absolute; left: 16px; top: 0; font-size: 24px; line-height: 30px; }}
-.mini .dstate {{ position: absolute; right: 14px; top: 0; font-size: 24px; font-weight: bold; line-height: 30px; letter-spacing: 1px; }}
-.mini .dlab {{ position: absolute; top: 32px; width: 170px; font-size: 14px; }}
-.mini .dval {{ position: absolute; top: 46px; width: 170px; font-size: 20px; font-weight: bold; }}
+.mini .dname {{ position: absolute; left: 16px; top: 2px; font-size: 24px; line-height: 28px; }}
+.mini .dstate {{ position: absolute; right: 14px; top: 2px; font-size: 24px; font-weight: bold; line-height: 28px; letter-spacing: 1px; }}
+.mini .dlab {{ position: absolute; top: 30px; width: 170px; font-size: 14px; }}
+.mini .dval {{ position: absolute; top: 44px; width: 170px; font-size: 20px; font-weight: bold; }}
 .mini .temp {{ left: 16px; }}
 .mini .humid {{ left: 210px; }}
 .mini .bat {{ left: 400px; }}
@@ -297,7 +297,7 @@ a.tile .ts {{ position: absolute; left: 8px; width: 284px; text-align: center; f
 a.tap {{ position: absolute; left: 0; width: {PAGE_W}px; box-sizing: border-box; text-decoration: none; border-bottom: 3px solid #000; }}
 a.tap.on {{ background: #000; color: #fff; }}
 a.tap.off {{ background: #fff; color: #000; }}
-a.nav {{ position: absolute; top: {NAV_TOP}px; height: {NAV_H}px; width: 150px; box-sizing: border-box; text-decoration: none; color: #000; background: #fff; border-top: 3px solid #000; border-left: 3px solid #000; font-size: 24px; font-weight: bold; line-height: {NAV_H}px; text-align: center; }}
+a.nav {{ position: absolute; top: {NAV_TOP}px; height: {NAV_H}px; width: 150px; box-sizing: border-box; text-decoration: none; color: #000; background: #fff; border-top: 3px solid #000; border-left: 3px solid #000; font-size: 20px; font-weight: bold; line-height: {NAV_H}px; text-align: center; }}
 a.nav.first {{ border-left: 0; }}
 </style>
 </head>
@@ -336,7 +336,7 @@ def render_home(states):
         '<div class="wx" style="top:%dpx;height:%dpx">'
         '<div class="wx-cond">%s</div>'
         '<div class="wx-temp">%s</div>'
-        '<div class="wx-rain%s" style="top:50px;height:55px;line-height:55px">%s</div>'
+        '<div class="wx-rain%s" style="top:38px;height:47px;line-height:47px">%s</div>'
         "</div>"
         % (y, WX_H, condition, temp, rain_class, rain_text)
     )
