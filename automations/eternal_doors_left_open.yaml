@@ -42,10 +42,13 @@ script:
             {% set mins = open_minutes | default(2) | int %}
             {% set ns = namespace(items=[]) %}
             {% for eid in doors | default([]) %}
-              {% set st = states[eid] if eid in states else none %}
-              {% if st is not none and st.state == 'on' and (as_timestamp(now()) - as_timestamp(st.last_changed)) >= mins * 60 %}
-                {% set raw = state_attr(eid, 'friendly_name') or eid %}
-                {% set ns.items = ns.items + [raw.split(' Eternal')[0]] %}
+              {% if is_state(eid, 'on') %}
+                {% set age = as_timestamp(now()) - as_timestamp(states[eid].last_changed) %}
+                {% if age >= (mins * 60 - 5) %}
+                  {% set raw = state_attr(eid, 'friendly_name') or eid %}
+                  {% set name = raw.replace(' Opening', '').split(' Eternal')[0] %}
+                  {% set ns.items = ns.items + [name] %}
+                {% endif %}
               {% endif %}
             {% endfor %}
             {{ ns.items }}
