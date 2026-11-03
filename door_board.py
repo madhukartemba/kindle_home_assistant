@@ -19,8 +19,7 @@ NAV_H = 88
 NAV_TOP = PAGE_H - NAV_H
 SEC_H = 26
 WX_H = 132
-DOOR_H = 46
-DATA_H = 48
+DOOR_H = 64
 IST = timezone(timedelta(hours=5, minutes=30))
 
 DOORS = (
@@ -270,12 +269,15 @@ a.back {{ position: absolute; right: 0; top: 0; width: 150px; height: {HEADER}px
 .wx-rain {{ position: absolute; left: 0; width: {PAGE_W}px; text-align: center; font-size: 34px; font-weight: bold; }}
 .wx-rain.due {{ background: #000; color: #fff; }}
 .mini {{ position: absolute; left: 0; width: {PAGE_W}px; border-bottom: 3px solid #000; box-sizing: border-box; }}
-.mini .dname {{ position: absolute; left: 16px; top: 0; font-size: 24px; line-height: {DOOR_H - 3}px; }}
-.mini .dstate {{ position: absolute; right: 14px; top: 0; font-size: 24px; font-weight: bold; line-height: {DOOR_H - 3}px; letter-spacing: 1px; }}
+.mini .dname {{ position: absolute; left: 16px; top: 0; font-size: 22px; line-height: 28px; }}
+.mini .dstate {{ position: absolute; right: 14px; top: 0; font-size: 22px; font-weight: bold; line-height: 28px; letter-spacing: 1px; }}
+.mini .dlab {{ position: absolute; top: 28px; width: 170px; font-size: 13px; }}
+.mini .dval {{ position: absolute; top: 42px; width: 170px; font-size: 20px; font-weight: bold; }}
+.mini .temp {{ left: 16px; }}
+.mini .humid {{ left: 210px; }}
+.mini .bat {{ left: 400px; }}
 .mini.open {{ background: #000; color: #fff; }}
 .mini.closed, .mini.other {{ background: #fff; color: #000; }}
-a.data {{ position: absolute; left: 0; width: {PAGE_W}px; text-decoration: none; color: #000; background: #fff; border-bottom: 3px solid #000; box-sizing: border-box; }}
-a.data span {{ position: absolute; left: 160px; top: 8px; width: 280px; height: 32px; line-height: 26px; border: 3px solid #000; box-sizing: border-box; text-align: center; font-size: 24px; font-weight: bold; background: #fff; }}
 a.tile {{ position: absolute; width: 300px; box-sizing: border-box; text-decoration: none; color: #000; background: #fff; }}
 a.tile.edge {{ border-left: 3px solid #000; }}
 a.tile.mid {{ border-bottom: 3px solid #000; }}
@@ -343,17 +345,19 @@ def render_home(states):
     y += SEC_H
     for name, device in DOORS:
         label, kind = classify(states.get(f"binary_sensor.eternal_{device}_opening"))
+        temp = reading(states.get(f"sensor.eternal_{device}_temperature"), "C")
+        humid = reading(states.get(f"sensor.eternal_{device}_humidity"), "%")
+        battery = reading(states.get(f"sensor.eternal_{device}_battery"), "%")
         parts.append(
             '<div class="mini %s" style="top:%dpx;height:%dpx">'
-            '<div class="dname">%s</div><div class="dstate">%s</div></div>'
-            % (kind, y, DOOR_H, name, label)
+            '<div class="dname">%s</div><div class="dstate">%s</div>'
+            '<div class="dlab temp">Temp</div><div class="dval temp">%s</div>'
+            '<div class="dlab humid">Humidity</div><div class="dval humid">%s</div>'
+            '<div class="dlab bat">Battery</div><div class="dval bat">%s</div>'
+            "</div>"
+            % (kind, y, DOOR_H, name, label, temp, humid, battery)
         )
         y += DOOR_H
-    parts.append(
-        '<a class="data" style="top:%dpx;height:%dpx" href="/doors"><span>Readings</span></a>'
-        % (y, DATA_H)
-    )
-    y += DATA_H
     parts.append('<div class="sec" style="top:%dpx">Rooms</div>' % y)
     y += SEC_H
     tiles = (

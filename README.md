@@ -9,7 +9,7 @@ The page is 600×794, refreshes every 20 seconds, and uses only links so it work
 ## Home screen
 
 - **Weather** shows the current condition and a rain line. If rain is expected in the next 24 hours, that line turns black and shows the time.
-- **Doors** lists each door as open or closed. An open door is a black row. **Readings** opens temperature, humidity, and battery for every door.
+- **Doors** lists each door as open or closed, with temperature, humidity, and battery. An open door is a black row.
 - **Rooms** runs the turn-off scripts: All off, Bedroom, Living room, and Main bedroom. These stay white so they do not look like an open door.
 - The bottom row opens Bedroom, Living, Main, and Kitchen. Each room is a page of on/off buttons. A control is black while it is on.
 
