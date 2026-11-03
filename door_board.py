@@ -53,6 +53,7 @@ ROOMS = (
         (
             ("Light", "light.living_room_light"),
             ("Light 2", "light.living_room_light_2"),
+            ("TV", "media_player.living_room_tv"),
             ("Fan 1", "fan.fan_regulator_3"),
             ("Fan 2", "fan.living_room_fan_2"),
             ("AC 1", "switch.living_room_living_room_ir_hub_voltas_1"),
@@ -66,6 +67,7 @@ ROOMS = (
         (
             ("Light", "light.main_bedroom_light"),
             ("Light 2", "light.main_bedroom_light_2"),
+            ("TV", "media_player.master_bedroom_tv_2"),
             ("Fan", "fan.main_bedroom_fan_regulator"),
             ("AC 1", "switch.main_bedroom_main_bedroom_ir_hub_hitachi_ac1_1"),
             ("AC 2", "switch.main_bedroom_main_bedroom_ir_hub_hitachi_ac1_2"),
