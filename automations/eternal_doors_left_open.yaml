@@ -1,0 +1,88 @@
+# One list of Eternal door opening sensors.
+# Add a new door in both places below: the automation trigger and the script call.
+# Home Assistant runs this from midnight to 6:00 AM. A door must stay open for 10 minutes.
+# The phone notification uses the Door alerts channel.
+
+doors: &doors
+  - binary_sensor.eternal_1c63_opening
+  - binary_sensor.eternal_9db8_opening
+  - binary_sensor.eternal_0263_opening
+  - binary_sensor.eternal_3bf0_opening
+  - binary_sensor.eternal_c965_opening
+
+script:
+  eternal_doors_left_open:
+    alias: Eternal doors left open
+    description: Pass each Eternal door's opening sensor.
+    mode: queued
+    fields:
+      doors:
+        name: Opening sensors
+        required: true
+        default: *doors
+        selector:
+          entity:
+            multiple: true
+            domain: binary_sensor
+      open_minutes:
+        name: Minutes open
+        default: 10
+        selector:
+          number:
+            min: 1
+            max: 180
+            mode: box
+    sequence:
+      - condition: time
+        after: "00:00:00"
+        before: "06:00:00"
+      - variables:
+          open_names: >
+            {% set mins = open_minutes | default(10) | int %}
+            {% set ns = namespace(items=[]) %}
+            {% for eid in doors | default([]) %}
+              {% set st = states[eid] if eid in states else none %}
+              {% if st is not none and st.state == 'on' and (as_timestamp(now()) - as_timestamp(st.last_changed)) >= mins * 60 %}
+                {% set raw = state_attr(eid, 'friendly_name') or eid %}
+                {% set ns.items = ns.items + [raw.split(' Eternal')[0]] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.items }}
+      - condition: template
+        value_template: "{{ open_names | length > 0 }}"
+      - action: notify.notify
+        data:
+          title: Door left open
+          message: >
+            {% if open_names | length == 1 %}
+            {{ open_names[0] }} has been open for at least {{ open_minutes | default(10) }} minutes.
+            {% else %}
+            These doors have been open for at least {{ open_minutes | default(10) }} minutes: {{ open_names | join(', ') }}.
+            {% endif %}
+          data:
+            channel: Door alerts
+            importance: high
+            priority: high
+            tag: eternal-door-open
+
+automation:
+  - alias: Doors left open after midnight
+    description: Add each new Eternal door's opening sensor to the trigger list and to the doors list.
+    mode: queued
+    triggers:
+      - trigger: state
+        entity_id: *doors
+        to: "on"
+        for:
+          minutes: 10
+      - trigger: time
+        at: "00:10:00"
+    conditions:
+      - condition: time
+        after: "00:00:00"
+        before: "06:00:00"
+    actions:
+      - action: script.eternal_doors_left_open
+        data:
+          open_minutes: 10
+          doors: *doors
