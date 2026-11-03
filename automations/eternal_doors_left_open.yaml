@@ -1,6 +1,6 @@
 # One list of Eternal door opening sensors.
 # Add a new door in both places below: the automation trigger and the script call.
-# Home Assistant runs this from midnight to 6:00 AM. A door must stay open for 10 minutes.
+# Home Assistant runs this from midnight to 6:00 AM. A door must stay open for 2 minutes.
 # The phone notification uses the Door alerts channel.
 
 doors: &doors
@@ -9,6 +9,7 @@ doors: &doors
   - binary_sensor.eternal_0263_opening
   - binary_sensor.eternal_3bf0_opening
   - binary_sensor.eternal_c965_opening
+  - binary_sensor.eternal_6a82_opening
 
 script:
   eternal_doors_left_open:
@@ -26,7 +27,7 @@ script:
             domain: binary_sensor
       open_minutes:
         name: Minutes open
-        default: 10
+        default: 2
         selector:
           number:
             min: 1
@@ -38,7 +39,7 @@ script:
         before: "06:00:00"
       - variables:
           open_names: >
-            {% set mins = open_minutes | default(10) | int %}
+            {% set mins = open_minutes | default(2) | int %}
             {% set ns = namespace(items=[]) %}
             {% for eid in doors | default([]) %}
               {% set st = states[eid] if eid in states else none %}
@@ -55,9 +56,9 @@ script:
           title: Door left open
           message: >
             {% if open_names | length == 1 %}
-            {{ open_names[0] }} has been open for at least {{ open_minutes | default(10) }} minutes.
+            {{ open_names[0] }} has been open for at least {{ open_minutes | default(2) }} minutes.
             {% else %}
-            These doors have been open for at least {{ open_minutes | default(10) }} minutes: {{ open_names | join(', ') }}.
+            These doors have been open for at least {{ open_minutes | default(2) }} minutes: {{ open_names | join(', ') }}.
             {% endif %}
           data:
             channel: Door alerts
@@ -74,7 +75,7 @@ automation:
         entity_id: *doors
         to: "on"
         for:
-          minutes: 10
+          minutes: 2
       - trigger: time
         at: "00:10:00"
     conditions:
@@ -84,5 +85,5 @@ automation:
     actions:
       - action: script.eternal_doors_left_open
         data:
-          open_minutes: 10
+          open_minutes: 2
           doors: *doors
