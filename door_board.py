@@ -18,8 +18,8 @@ HEADER = 56
 NAV_H = 88
 NAV_TOP = PAGE_H - NAV_H
 SEC_H = 26
-WX_H = 132
-DOOR_H = 64
+WX_H = 108
+DOOR_H = 70
 IST = timezone(timedelta(hours=5, minutes=30))
 
 DOORS = (
@@ -264,15 +264,15 @@ body {{ font-family: Arial, Helvetica, sans-serif; }}
 a.back {{ position: absolute; right: 0; top: 0; width: 150px; height: {HEADER}px; line-height: {HEADER}px; text-align: center; background: #000; color: #fff; text-decoration: none; font-size: 28px; font-weight: bold; }}
 .sec {{ position: absolute; left: 0; width: {PAGE_W}px; height: {SEC_H}px; line-height: 23px; padding-left: 16px; font-size: 18px; font-weight: bold; letter-spacing: 0.8px; border-bottom: 3px solid #000; box-sizing: border-box; }}
 .wx {{ position: absolute; left: 0; width: {PAGE_W}px; border-bottom: 3px solid #000; box-sizing: border-box; background: #fff; color: #000; }}
-.wx-cond {{ position: absolute; left: 20px; top: 18px; font-size: 36px; font-weight: bold; }}
-.wx-temp {{ position: absolute; right: 20px; top: 10px; font-size: 52px; font-weight: bold; }}
-.wx-rain {{ position: absolute; left: 0; width: {PAGE_W}px; text-align: center; font-size: 34px; font-weight: bold; }}
+.wx-cond {{ position: absolute; left: 20px; top: 8px; font-size: 32px; font-weight: bold; }}
+.wx-temp {{ position: absolute; right: 20px; top: 2px; font-size: 44px; font-weight: bold; }}
+.wx-rain {{ position: absolute; left: 0; width: {PAGE_W}px; text-align: center; font-size: 30px; font-weight: bold; }}
 .wx-rain.due {{ background: #000; color: #fff; }}
 .mini {{ position: absolute; left: 0; width: {PAGE_W}px; border-bottom: 3px solid #000; box-sizing: border-box; }}
-.mini .dname {{ position: absolute; left: 16px; top: 0; font-size: 22px; line-height: 28px; }}
-.mini .dstate {{ position: absolute; right: 14px; top: 0; font-size: 22px; font-weight: bold; line-height: 28px; letter-spacing: 1px; }}
-.mini .dlab {{ position: absolute; top: 28px; width: 170px; font-size: 13px; }}
-.mini .dval {{ position: absolute; top: 42px; width: 170px; font-size: 20px; font-weight: bold; }}
+.mini .dname {{ position: absolute; left: 16px; top: 0; font-size: 24px; line-height: 30px; }}
+.mini .dstate {{ position: absolute; right: 14px; top: 0; font-size: 24px; font-weight: bold; line-height: 30px; letter-spacing: 1px; }}
+.mini .dlab {{ position: absolute; top: 32px; width: 170px; font-size: 14px; }}
+.mini .dval {{ position: absolute; top: 46px; width: 170px; font-size: 20px; font-weight: bold; }}
 .mini .temp {{ left: 16px; }}
 .mini .humid {{ left: 210px; }}
 .mini .bat {{ left: 400px; }}
@@ -336,7 +336,7 @@ def render_home(states):
         '<div class="wx" style="top:%dpx;height:%dpx">'
         '<div class="wx-cond">%s</div>'
         '<div class="wx-temp">%s</div>'
-        '<div class="wx-rain%s" style="top:70px;height:59px;line-height:59px">%s</div>'
+        '<div class="wx-rain%s" style="top:50px;height:55px;line-height:55px">%s</div>'
         "</div>"
         % (y, WX_H, condition, temp, rain_class, rain_text)
     )
