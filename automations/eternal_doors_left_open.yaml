@@ -46,8 +46,15 @@ script:
                 {% set age = as_timestamp(now()) - as_timestamp(states[eid].last_changed) %}
                 {% if age >= (mins * 60 - 5) %}
                   {% set raw = state_attr(eid, 'friendly_name') or eid %}
-                  {% set name = raw.replace(' Opening', '').split(' Eternal')[0] %}
-                  {% set ns.items = ns.items + [name] %}
+                  {% set name = raw | regex_replace('(?i)\s+opening$', '') %}
+                  {% set name = name.split(' Eternal')[0] | trim %}
+                  {% if 'door' not in name | lower %}
+                    {% set name = name ~ ' door' %}
+                  {% endif %}
+                  {% set shown = (age / 60) | round(0, 'floor') | int %}
+                  {% if shown < mins %}{% set shown = mins %}{% endif %}
+                  {% set unit = 'minute' if shown == 1 else 'minutes' %}
+                  {% set ns.items = ns.items + [name ~ ' has been open for ' ~ shown ~ ' ' ~ unit] %}
                 {% endif %}
               {% endif %}
             {% endfor %}
@@ -57,12 +64,7 @@ script:
       - action: notify.notify
         data:
           title: Door left open
-          message: >
-            {% if open_names | length == 1 %}
-            {{ open_names[0] }} has been open for at least {{ open_minutes | default(2) }} minutes.
-            {% else %}
-            These doors have been open for at least {{ open_minutes | default(2) }} minutes: {{ open_names | join(', ') }}.
-            {% endif %}
+          message: "{{ open_names | join('. ') }}."
           data:
             channel: Door alerts
             importance: high
