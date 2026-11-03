@@ -4,6 +4,8 @@ A black-and-white Home Assistant screen for a Kindle. `door_board.py` renders pl
 
 The page is 600×794, refreshes every 20 seconds, and uses only links so it works in the old Kindle browser.
 
+![Home screen on the Kindle](home.jpg)
+
 ## Home screen
 
 - **Weather** shows the current condition and a rain line. If rain is expected in the next 24 hours, that line turns black and shows the time.
