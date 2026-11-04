@@ -258,7 +258,7 @@ def page(title, refresh, body):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width={PAGE_W}, height={PAGE_H}, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta http-equiv="refresh" content="20; url={refresh}">
+<meta http-equiv="refresh" content="10; url={refresh}">
 <title>{title}</title>
 <style>
 html, body {{ margin: 0; padding: 0; width: {PAGE_W}px; height: {PAGE_H}px; overflow: hidden; background: #fff; color: #000; }}

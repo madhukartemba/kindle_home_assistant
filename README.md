@@ -2,7 +2,7 @@
 
 A black-and-white Home Assistant screen for a Kindle. `door_board.py` renders plain HTML sized for the Kindle browser and talks to Home Assistant with a long-lived token.
 
-The page is 600×794, refreshes every 20 seconds, and uses only links so it works in the old Kindle browser.
+The page is 600×794, refreshes every 10 seconds, and uses only links so it works in the old Kindle browser.
 
 ![Home screen on the Kindle](home.jpg)
 
