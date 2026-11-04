@@ -1,7 +1,7 @@
 # One list of Eternal door opening sensors.
 # Add a new door in both places below: the automation trigger and the script call.
-# Home Assistant runs this from midnight to 6:00 AM. A door must stay open for 2 minutes.
-# The phone notification uses the Door alerts channel.
+# Home Assistant runs this from 10:00 PM to 6:00 AM. A door must stay open for 10 minutes.
+# The phone notification uses the Door alerts channel. Alexa says the same sentence.
 
 doors: &doors
   - binary_sensor.main_door_eternal_10_opening
@@ -27,7 +27,7 @@ script:
             domain: binary_sensor
       open_minutes:
         name: Minutes open
-        default: 2
+        default: 10
         selector:
           number:
             min: 1
@@ -35,11 +35,11 @@ script:
             mode: box
     sequence:
       - condition: time
-        after: "00:00:00"
+        after: "22:00:00"
         before: "06:00:00"
       - variables:
           open_names: >
-            {% set mins = open_minutes | default(2) | int %}
+            {% set mins = open_minutes | default(10) | int %}
             {% set ns = namespace(items=[]) %}
             {% for eid in doors | default([]) %}
               {% if is_state(eid, 'on') %}
@@ -70,9 +70,19 @@ script:
             importance: high
             priority: high
             tag: eternal-door-open
+      - action: notify.alexa_media
+        data:
+          target:
+            - media_player.echo_1
+            - media_player.echo_2
+            - media_player.echo_3
+            - media_player.echo_dot
+          message: "{{ open_names | join('. ') }}."
+          data:
+            type: tts
 
 automation:
-  - alias: Doors left open after midnight
+  - alias: Doors left open after 10pm
     description: Add each new Eternal door's opening sensor to the trigger list and to the doors list.
     mode: queued
     triggers:
@@ -80,15 +90,15 @@ automation:
         entity_id: *doors
         to: "on"
         for:
-          minutes: 2
+          minutes: 10
       - trigger: time
-        at: "00:10:00"
+        at: "22:10:00"
     conditions:
       - condition: time
-        after: "00:00:00"
+        after: "22:00:00"
         before: "06:00:00"
     actions:
       - action: script.eternal_doors_left_open
         data:
-          open_minutes: 2
+          open_minutes: 10
           doors: *doors
