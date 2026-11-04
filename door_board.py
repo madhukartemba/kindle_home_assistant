@@ -24,7 +24,7 @@ DOOR_H = 76
 IST = timezone(timedelta(hours=5, minutes=30))
 
 DOORS = (
-    ("Main Door", "1c63"),
+    ("Main Door", "7a93"),
     ("Front Door 1", "9db8"),
     ("Front Door 2", "0263"),
     ("Back Door 1", "3bf0"),

@@ -80,7 +80,7 @@
   triggers:
     - trigger: state
       entity_id:
-        - binary_sensor.eternal_1c63_generic
+        - binary_sensor.eternal_7a93_generic
       to: "on"
   variables:
     announcement: Someone is at the main door.
