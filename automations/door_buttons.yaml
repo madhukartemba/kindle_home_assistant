@@ -1,0 +1,108 @@
+# Door buttons. Add a button by putting its entity in that automation's trigger list.
+# Edit announcement to change the sentence Alexa says.
+# The chime and the Echo speakers match the doorbell automation.
+# A second press in the same 20 seconds is ignored.
+
+- id: door_button_front
+  alias: Front door button
+  description: Add a door button by putting its entity in the trigger list. Edit announcement to change what Alexa says.
+  mode: single
+  triggers:
+    - trigger: state
+      entity_id:
+        - binary_sensor.eternal_9db8_generic
+        - binary_sensor.eternal_0263_generic
+      to: "on"
+  variables:
+    announcement: Someone is at the front door.
+  actions:
+    - action: notify.alexa_media
+      data:
+        target:
+          - media_player.echo_1
+          - media_player.echo_2
+          - media_player.echo_3
+          - media_player.echo_dot
+        message: '<audio src="soundbank://soundlibrary/home/amzn_sfx_doorbell_chime_01"/> {{ announcement }}'
+        data:
+          type: tts
+    - action: notify.notify
+      data:
+        title: Front door
+        message: "{{ announcement }} {{ now().strftime('%I:%M %p') }}"
+        data:
+          ttl: 0
+          priority: high
+          importance: high
+          channel: Doorbell
+    - delay:
+        seconds: 20
+
+- id: door_button_back
+  alias: Back door button
+  description: Add a door button by putting its entity in the trigger list. Edit announcement to change what Alexa says.
+  mode: single
+  triggers:
+    - trigger: state
+      entity_id:
+        - binary_sensor.eternal_3bf0_generic
+        - binary_sensor.eternal_c965_generic
+      to: "on"
+  variables:
+    announcement: Someone is at the back door.
+  actions:
+    - action: notify.alexa_media
+      data:
+        target:
+          - media_player.echo_1
+          - media_player.echo_2
+          - media_player.echo_3
+          - media_player.echo_dot
+        message: '<audio src="soundbank://soundlibrary/home/amzn_sfx_doorbell_chime_01"/> {{ announcement }}'
+        data:
+          type: tts
+    - action: notify.notify
+      data:
+        title: Back door
+        message: "{{ announcement }} {{ now().strftime('%I:%M %p') }}"
+        data:
+          ttl: 0
+          priority: high
+          importance: high
+          channel: Doorbell
+    - delay:
+        seconds: 20
+
+- id: door_button_main
+  alias: Main door button
+  description: Add a door button by putting its entity in the trigger list. Edit announcement to change what Alexa says.
+  mode: single
+  triggers:
+    - trigger: state
+      entity_id:
+        - binary_sensor.eternal_1c63_generic
+      to: "on"
+  variables:
+    announcement: Someone is at the main door.
+  actions:
+    - action: notify.alexa_media
+      data:
+        target:
+          - media_player.echo_1
+          - media_player.echo_2
+          - media_player.echo_3
+          - media_player.echo_dot
+        message: '<audio src="soundbank://soundlibrary/home/amzn_sfx_doorbell_chime_01"/> {{ announcement }}'
+        data:
+          type: tts
+    - action: notify.notify
+      data:
+        title: Main door
+        message: "{{ announcement }} {{ now().strftime('%I:%M %p') }}"
+        data:
+          ttl: 0
+          priority: high
+          importance: high
+          channel: Doorbell
+    - delay:
+        seconds: 20
