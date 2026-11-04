@@ -114,6 +114,7 @@ RAINY = {"rainy", "pouring", "lightning", "lightning-rainy", "hail", "snowy", "s
 _forecast_at = 0.0
 _forecast = None
 _forecast_retry_at = 0.0
+_last_page_at = time.time()
 
 
 def request(url, data=None, headers=None, timeout=8):
@@ -477,8 +478,27 @@ def route(path):
     return render_home(fetch_states())
 
 
+def is_tool(user_agent):
+    """Command line checks, like the Kindle watchdog, are not the browser."""
+    return (user_agent or "").lower().startswith(("wget", "curl", "python"))
+
+
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
+        global _last_page_at
+        if self.path.split("?", 1)[0] == "/status":
+            # Seconds since the browser last asked for a page. The Kindle watchdog
+            # restarts the browser when this grows, which means it is stuck.
+            payload = str(int(time.time() - _last_page_at)).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+            return
+        if not is_tool(self.headers.get("User-Agent")):
+            _last_page_at = time.time()
         try:
             payload = route(self.path).encode()
             status = 200
