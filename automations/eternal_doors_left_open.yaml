@@ -4,7 +4,7 @@
 # The phone notification uses the Door alerts channel.
 
 doors: &doors
-  - binary_sensor.eternal_7a93_opening
+  - binary_sensor.main_door_eternal_10_opening
   - binary_sensor.eternal_9db8_opening
   - binary_sensor.eternal_0263_opening
   - binary_sensor.eternal_3bf0_opening

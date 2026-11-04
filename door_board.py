@@ -24,12 +24,26 @@ DOOR_H = 76
 IST = timezone(timedelta(hours=5, minutes=30))
 
 DOORS = (
-    ("Main Door", "7a93"),
+    ("Main Door", "main_door_eternal_10"),
     ("Front Door 1", "9db8"),
     ("Front Door 2", "0263"),
     ("Back Door 1", "3bf0"),
     ("Back Door 2", "c965"),
 )
+
+
+def door_ids(device):
+    """Main door uses recreated entity ids. The others still use the device suffix."""
+    if device == "main_door_eternal_10":
+        stem = "main_door_eternal_10"
+    else:
+        stem = "eternal_" + device
+    return (
+        "binary_sensor.%s_opening" % stem,
+        "sensor.%s_temperature" % stem,
+        "sensor.%s_humidity" % stem,
+        "sensor.%s_battery" % stem,
+    )
 
 # slug, nav label, page title, (button label, entity id)
 ROOMS = (
@@ -350,10 +364,11 @@ def render_home(states):
     parts.append('<div class="sec" style="top:%dpx">Doors</div>' % y)
     y += SEC_H
     for name, device in DOORS:
-        label, kind = classify(states.get(f"binary_sensor.eternal_{device}_opening"))
-        temp = reading(states.get(f"sensor.eternal_{device}_temperature"), "C")
-        humid = reading(states.get(f"sensor.eternal_{device}_humidity"), "%")
-        battery = reading(states.get(f"sensor.eternal_{device}_battery"), "%")
+        opening, temp_id, humid_id, battery_id = door_ids(device)
+        label, kind = classify(states.get(opening))
+        temp = reading(states.get(temp_id), "C")
+        humid = reading(states.get(humid_id), "%")
+        battery = reading(states.get(battery_id), "%")
         parts.append(
             '<div class="mini %s" style="top:%dpx;height:%dpx">'
             '<div class="dname">%s</div><div class="dstate">%s</div>'
@@ -406,10 +421,11 @@ def render_doors(states):
     height = int((PAGE_H - HEADER) / count)
     rows = []
     for index, (name, device) in enumerate(DOORS):
-        label, kind = classify(states.get(f"binary_sensor.eternal_{device}_opening"))
-        temp = reading(states.get(f"sensor.eternal_{device}_temperature"), "C")
-        humid = reading(states.get(f"sensor.eternal_{device}_humidity"), "%")
-        battery = reading(states.get(f"sensor.eternal_{device}_battery"), "%")
+        opening, temp_id, humid_id, battery_id = door_ids(device)
+        label, kind = classify(states.get(opening))
+        temp = reading(states.get(temp_id), "C")
+        humid = reading(states.get(humid_id), "%")
+        battery = reading(states.get(battery_id), "%")
         top = HEADER + index * height
         row_height = (PAGE_H - top) if index == count - 1 else height
         rows.append(
