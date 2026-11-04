@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Serve a Kindle-sized door board from the Home Assistant sensors."""
 
+import html
 import json
 import time
 import urllib.error
@@ -112,9 +113,10 @@ RAINY = {"rainy", "pouring", "lightning", "lightning-rainy", "hail", "snowy", "s
 
 _forecast_at = 0.0
 _forecast = None
+_forecast_retry_at = 0.0
 
 
-def request(url, data=None, headers=None, timeout=20):
+def request(url, data=None, headers=None, timeout=8):
     req = urllib.request.Request(url, data=data, headers=headers or {})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         return resp.status, resp.read()
@@ -178,10 +180,12 @@ def run_script(entity_id):
 
 
 def hourly_forecast():
-    global _forecast_at, _forecast
+    global _forecast_at, _forecast, _forecast_retry_at
     now = time.time()
     if _forecast is not None and now - _forecast_at < 600:
         return _forecast
+    if _forecast is None and now < _forecast_retry_at:
+        return None
     try:
         _, body = request(
             HA + "/api/services/weather/get_forecasts?return_response",
@@ -189,12 +193,13 @@ def hourly_forecast():
                 {"entity_id": "weather.forecast_home", "type": "hourly"}
             ).encode(),
             headers=ha_headers({"Content-Type": "application/json"}),
-            timeout=15,
         )
         payload = json.loads(body)
         _forecast = payload["service_response"]["weather.forecast_home"]["forecast"]
         _forecast_at = now
     except Exception:
+        # Do not retry on every page load while HA is slow; try again in a minute.
+        _forecast_retry_at = now + 60
         if _forecast is None:
             return None
     return _forecast
@@ -479,8 +484,18 @@ class Handler(BaseHTTPRequestHandler):
             status = 200
             content_type = "text/html; charset=utf-8"
         except Exception as err:
-            payload = f"<h1>Door board unavailable</h1><p>{err}</p>".encode()
-            status = 500
+            # Keep a refresh tag so the Kindle retries by itself instead of sticking here.
+            payload = (
+                '<!DOCTYPE html><html><head><meta charset="utf-8">'
+                '<meta http-equiv="refresh" content="10; url=/">'
+                '<style>body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:16px;'
+                'width:%dpx;height:%dpx;background:#fff;color:#000}'
+                'h1{font-size:32px;margin:0 0 12px}p{font-size:22px}</style>'
+                "</head><body><h1>Home is not reachable</h1>"
+                "<p>Trying again in 10 seconds.</p>"
+                "<p>%s</p></body></html>" % (PAGE_W, PAGE_H, html.escape(str(err)))
+            ).encode()
+            status = 503
             content_type = "text/html; charset=utf-8"
         self.send_response(status)
         self.send_header("Content-Type", content_type)
